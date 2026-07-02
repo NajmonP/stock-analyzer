@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:17
+    container_name: stock-analyzer-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-stock_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stock_password}
+      POSTGRES_DB: ${POSTGRES_DB:-stock_analyzer_database}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+      - stock_analyzer_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-stock_user} -d ${POSTGRES_DB:-stock_analyzer_database}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: stock-analyzer-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-stock_analyzer_database}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-stock_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-stock_password}
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: stock_analyzer
+      FMP_API_KEY: ${FMP_API_KEY:-}
+    ports:
+      - "8080:8080"
+
+volumes:
+  stock_analyzer_data:
