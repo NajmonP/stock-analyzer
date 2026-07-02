@@ -45,11 +45,11 @@ CREATE TABLE IF NOT EXISTS stock_analyzer.market_day (
     market_day_id        BIGSERIAL PRIMARY KEY,
     stock_id             BIGINT      NOT NULL REFERENCES stock_analyzer.stock (stock_id) ON DELETE CASCADE,
     date                 DATE        NOT NULL,
-    open_price           NUMERIC(18, 4),
-    close_price          NUMERIC(18, 4),
-    high_price           NUMERIC(18, 4),
-    low_price            NUMERIC(18, 4),
-    volume               BIGINT,
+    open_price           NUMERIC(18, 4) NOT NULL,
+    close_price          NUMERIC(18, 4) NOT NULL,
+    high_price           NUMERIC(18, 4) NOT NULL,
+    low_price            NUMERIC(18, 4) NOT NULL,
+    volume               BIGINT NOT NULL,
     created_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (stock_id, date)
 );
