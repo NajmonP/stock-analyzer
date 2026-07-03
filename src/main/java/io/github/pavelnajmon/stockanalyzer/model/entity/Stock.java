@@ -257,6 +257,11 @@ public class Stock {
         this.marketDays = marketDays;
     }
 
+    public void addMarketDay(MarketDay marketDay) {
+        marketDays.add(marketDay);
+        marketDay.setStock(this);
+    }
+
     public List<WatchlistStock> getWatchlistStocks() {
         return watchlistStocks;
     }
