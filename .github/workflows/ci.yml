@@ -15,6 +15,21 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: stock_user
+          POSTGRES_PASSWORD: stock_password
+          POSTGRES_DB: stock_analyzer_database
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U stock_user -d stock_analyzer_database"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       # Checks out the repository source code into the GitHub runner.
       - name: Checkout repository
@@ -28,12 +43,29 @@ jobs:
           java-version: '26'
           cache: maven
 
+      # Installs PostgreSQL client so the schema SQL scripts can be executed.
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # Creates the database schema and indexes before tests are executed.
+      - name: Initialize database schema
+        env:
+          PGPASSWORD: stock_password
+        run: |
+          psql -h localhost -p 5432 -U stock_user -d stock_analyzer_database -f database/01_create.sql
+          psql -h localhost -p 5432 -U stock_user -d stock_analyzer_database -f database/02_indexes.sql
+
       # Makes the Maven wrapper executable.
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
       # Compiles the project and runs Maven verification, including tests.
       - name: Build with Maven
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/stock_analyzer_database
+          SPRING_DATASOURCE_USERNAME: stock_user
+          SPRING_DATASOURCE_PASSWORD: stock_password
+          SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: stock_analyzer
         run: ./mvnw clean verify
 
   # The second job verifies that the application Docker image can be built.
