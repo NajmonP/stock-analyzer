@@ -11,4 +11,12 @@ import java.util.List;
 public interface StockPersistenceService {
     @Transactional
     void saveStockWithMarketDays(StockDataDto stockDataDto, List<MarketDayDto> marketDays);
+
+    List<String> getAllTickers();
+
+    List<String> getTickersForStockDataRefresh(int limit);
+
+    void addOrUpdateMarketDay(String ticker, MarketDayDto marketDayDto);
+
+    void updateStockData(String ticker, StockDataDto stockDataDto);
 }

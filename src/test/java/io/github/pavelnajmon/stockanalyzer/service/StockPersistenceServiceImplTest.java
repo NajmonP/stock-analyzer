@@ -6,15 +6,21 @@ import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.model.entity.MarketDay;
 import io.github.pavelnajmon.stockanalyzer.model.entity.Stock;
+import io.github.pavelnajmon.stockanalyzer.repository.MarketDayRepository;
 import io.github.pavelnajmon.stockanalyzer.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -25,10 +31,14 @@ class StockPersistenceServiceImplTest {
     private StockRepository stockRepository;
 
     @Mock
+    private MarketDayRepository marketDayRepository;
+
+    @Mock
     private MarketDayMapper marketDayMapper;
 
     @Mock
     private StockMapper stockMapper;
+
 
     private StockPersistenceServiceImpl stockPersistenceService;
 
@@ -36,6 +46,7 @@ class StockPersistenceServiceImplTest {
     void setUp() {
         stockPersistenceService = new StockPersistenceServiceImpl(
                 stockRepository,
+                marketDayRepository,
                 marketDayMapper,
                 stockMapper
         );
@@ -139,5 +150,96 @@ class StockPersistenceServiceImplTest {
         verify(marketDayMapper).toEntity(marketDayDto);
         verify(stock, never()).addMarketDay(any());
         verify(stockRepository, never()).save(any());
+    }
+
+    @Test
+    void addOrUpdateMarketDay_shouldAddNewMarketDayWhenItDoesNotExist() {
+        // given
+        String ticker = "AAPL";
+
+        Stock stock = mock(Stock.class);
+        MarketDayDto marketDayDto = mock(MarketDayDto.class);
+        MarketDay marketDay = mock(MarketDay.class);
+
+        when(marketDayDto.date()).thenReturn(LocalDate.of(2026, 7, 3));
+
+        when(stockRepository.findByTicker(ticker))
+                .thenReturn(Optional.of(stock));
+
+        when(marketDayRepository.findByStockTickerAndDate(ticker, LocalDate.of(2026, 7, 3)))
+                .thenReturn(Optional.empty());
+
+        when(marketDayMapper.toEntity(marketDayDto))
+                .thenReturn(marketDay);
+
+        // when
+        stockPersistenceService.addOrUpdateMarketDay(ticker, marketDayDto);
+
+        // then
+        verify(stockRepository).findByTicker(ticker);
+        verify(marketDayRepository).findByStockTickerAndDate(ticker, LocalDate.of(2026, 7, 3));
+        verify(marketDayMapper).toEntity(marketDayDto);
+        verify(stock).addMarketDay(marketDay);
+    }
+
+    @Test
+    void addOrUpdateMarketDay_shouldUpdateExistingMarketDayWhenItAlreadyExists() {
+        // given
+        String ticker = "AAPL";
+        LocalDate date = LocalDate.of(2026, 7, 3);
+
+        Stock stock = mock(Stock.class);
+        MarketDay existingMarketDay = mock(MarketDay.class);
+        MarketDayDto marketDayDto = mock(MarketDayDto.class);
+
+        when(marketDayDto.date()).thenReturn(date);
+
+        when(stockRepository.findByTicker(ticker))
+                .thenReturn(Optional.of(stock));
+
+        when(marketDayRepository.findByStockTickerAndDate(ticker, date))
+                .thenReturn(Optional.of(existingMarketDay));
+
+        // when
+        stockPersistenceService.addOrUpdateMarketDay(ticker, marketDayDto);
+
+        // then
+        verify(marketDayMapper).updateEntityFromDto(marketDayDto, existingMarketDay);
+        verify(marketDayMapper, never()).toEntity(any());
+        verify(stock, never()).addMarketDay(any());
+    }
+
+    @Test
+    void updateStockData_shouldUpdateExistingStockAndSetLastUpdatedAt() {
+        // given
+        String ticker = "AAPL";
+
+        Stock stock = mock(Stock.class);
+        StockDataDto stockDataDto = mock(StockDataDto.class);
+
+        when(stockRepository.findByTicker(ticker))
+                .thenReturn(Optional.of(stock));
+
+        // when
+        stockPersistenceService.updateStockData(ticker, stockDataDto);
+
+        // then
+        verify(stockRepository).findByTicker(ticker);
+        verify(stockMapper).updateEntityFromDto(stockDataDto, stock);
+        verify(stock).setLastUpdatedAt(any(Instant.class));
+    }
+
+    @Test
+    void getTickersForStockDataRefresh_shouldUseConfiguredLimit() {
+        // given
+        when(stockRepository.findTickersForStockDataRefresh(PageRequest.of(0, 100)))
+                .thenReturn(List.of("AAPL", "MSFT"));
+
+        // when
+        List<String> result = stockPersistenceService.getTickersForStockDataRefresh(100);
+
+        // then
+        assertThat(result).containsExactly("AAPL", "MSFT");
+        verify(stockRepository).findTickersForStockDataRefresh(PageRequest.of(0, 100));
     }
 }

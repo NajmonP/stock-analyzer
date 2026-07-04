@@ -11,7 +11,15 @@ public class StockMapper {
 
     public Stock toEntity(StockDataDto stockDataDto) {
         Stock stock = new Stock();
+        setStockAttributes(stockDataDto, stock);
+        return stock;
+    }
 
+    public void updateEntityFromDto(StockDataDto stockDataDto, Stock stock) {
+        setStockAttributes(stockDataDto, stock);
+    }
+
+    private void setStockAttributes(StockDataDto stockDataDto, Stock stock) {
         stock.setTicker(stockDataDto.ticker());
         stock.setCompanyName(stockDataDto.companyName());
         stock.setDescription(stockDataDto.description());
@@ -32,7 +40,5 @@ public class StockMapper {
         stock.setFreeCashFlowPerShare(stockDataDto.freeCashFlowPerShare());
         stock.setOperatingMargin(stockDataDto.operatingMargin());
         stock.setLastUpdatedAt(Instant.now());
-
-        return stock;
     }
 }

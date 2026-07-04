@@ -12,6 +12,16 @@ public class MarketDayMapper {
     public MarketDay toEntity(MarketDayDto marketDayDto) {
         MarketDay marketDay = new MarketDay();
 
+        setMarketDayAttributes(marketDayDto, marketDay);
+
+        return marketDay;
+    }
+
+    public void updateEntityFromDto(MarketDayDto marketDayDto, MarketDay marketDay) {
+        setMarketDayAttributes(marketDayDto, marketDay);
+    }
+
+    private void setMarketDayAttributes(MarketDayDto marketDayDto, MarketDay marketDay) {
         marketDay.setDate(marketDayDto.date());
         marketDay.setOpenPrice(marketDayDto.openPrice());
         marketDay.setHighPrice(marketDayDto.highPrice());
@@ -19,7 +29,5 @@ public class MarketDayMapper {
         marketDay.setClosePrice(marketDayDto.closePrice());
         marketDay.setVolume(marketDayDto.volume());
         marketDay.setCreatedAt(Instant.now());
-
-        return marketDay;
     }
 }
