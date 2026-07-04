@@ -11,22 +11,22 @@ import java.util.List;
 @Component
 public class YahooFinanceHistoricalPriceProvider implements HistoricalPriceProvider {
 
-    private static final String BASE_URL = "https://query1.finance.yahoo.com";
     private static final String INTERVAL = "1d";
     private static final String RANGE = "10y";
 
     private final RestClient restClient;
+    private final YahooHistoricalDataMapper yahooHistoricalDataMapper;
 
-    public YahooFinanceHistoricalPriceProvider() {
-        this.restClient = RestClient.builder()
-                .baseUrl(BASE_URL)
+    public YahooFinanceHistoricalPriceProvider(RestClient.Builder restClientBuilder, YahooHistoricalDataMapper yahooHistoricalDataMapper) {
+        this.restClient = restClientBuilder
+                .baseUrl("https://query1.finance.yahoo.com")
                 .defaultHeader("User-Agent", "Mozilla/5.0")
                 .build();
+        this.yahooHistoricalDataMapper = yahooHistoricalDataMapper;
     }
 
     @Override
     public List<MarketDayDto> getStockHistoricalPrices(String ticker) {
-
         JsonNode root = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v8/finance/chart/{ticker}")
@@ -37,6 +37,6 @@ public class YahooFinanceHistoricalPriceProvider implements HistoricalPriceProvi
                 .retrieve()
                 .body(JsonNode.class);
 
-        return YahooHistoricalDataMapper.toHistoricalPrices(root);
+        return yahooHistoricalDataMapper.toHistoricalPrices(root);
     }
 }

@@ -2,14 +2,14 @@ package io.github.pavelnajmon.stockanalyzer.mapper;
 
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import io.github.pavelnajmon.stockanalyzer.model.entity.MarketDay;
-import io.github.pavelnajmon.stockanalyzer.model.entity.Stock;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-public final class MarketDayMapper {
-    private MarketDayMapper() {}
+@Component
+public class MarketDayMapper {
 
-    public static MarketDay toEntity(MarketDayDto marketDayDto) {
+    public MarketDay toEntity(MarketDayDto marketDayDto) {
         MarketDay marketDay = new MarketDay();
 
         marketDay.setDate(marketDayDto.date());

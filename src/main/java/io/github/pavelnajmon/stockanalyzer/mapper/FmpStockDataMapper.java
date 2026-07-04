@@ -3,13 +3,14 @@ package io.github.pavelnajmon.stockanalyzer.mapper;
 import io.github.pavelnajmon.stockanalyzer.model.dto.FmpProfileDataResponse;
 import io.github.pavelnajmon.stockanalyzer.model.dto.FmpRatiosResponse;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-public final class FmpStockDataMapper {
-    private FmpStockDataMapper() {}
+@Component
+public class FmpStockDataMapper {
 
-    public static StockDataDto toStockData(FmpProfileDataResponse profile, FmpRatiosResponse ratios) {
+    public StockDataDto toStockData(FmpProfileDataResponse profile, FmpRatiosResponse ratios) {
         BigDecimal fiftyTwoWeekLow = parseRangeLow(profile.range());
         BigDecimal fiftyTwoWeekHigh = parseRangeHigh(profile.range());
 
@@ -36,7 +37,7 @@ public final class FmpStockDataMapper {
         );
     }
 
-    private static BigDecimal parseRangeLow(String range) {
+    private BigDecimal parseRangeLow(String range) {
         if (range == null || !range.contains("-")) {
             return null;
         }
@@ -45,7 +46,7 @@ public final class FmpStockDataMapper {
         return new BigDecimal(parts[0].trim());
     }
 
-    private static BigDecimal parseRangeHigh(String range) {
+    private BigDecimal parseRangeHigh(String range) {
         if (range == null || !range.contains("-")) {
             return null;
         }

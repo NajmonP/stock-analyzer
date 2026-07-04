@@ -1,6 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.mapper;
 
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
+import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
 import java.math.BigDecimal;
@@ -10,10 +11,11 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class YahooHistoricalDataMapper {
+@Component
+public class YahooHistoricalDataMapper {
     private YahooHistoricalDataMapper() {}
 
-    public static List<MarketDayDto> toHistoricalPrices(JsonNode root) {
+    public List<MarketDayDto> toHistoricalPrices(JsonNode root) {
         JsonNode result = root
                 .path("chart")
                 .path("result")
@@ -70,7 +72,7 @@ public final class YahooHistoricalDataMapper {
         return prices;
     }
 
-    private static BigDecimal getBigDecimalValue(JsonNode values, int index) {
+    private BigDecimal getBigDecimalValue(JsonNode values, int index) {
         if (!values.isArray() || index >= values.size() || values.get(index).isNull()) {
             return null;
         }
@@ -78,7 +80,7 @@ public final class YahooHistoricalDataMapper {
         return BigDecimal.valueOf(values.get(index).asDouble());
     }
 
-    private static Long getLongValue(JsonNode values, int index) {
+    private Long getLongValue(JsonNode values, int index) {
         if (!values.isArray() || index >= values.size() || values.get(index).isNull()) {
             return null;
         }

@@ -13,17 +13,18 @@ public class FmpStockDataProvider implements StockDataProvider {
 
     private final FmpProperties fmpProperties;
     private final RestClient restClient;
+    private final FmpStockDataMapper fmpStockDataMapper;
 
-    public FmpStockDataProvider(FmpProperties fmpProperties) {
+    public FmpStockDataProvider(FmpProperties fmpProperties, RestClient.Builder restClientBuilder, FmpStockDataMapper fmpStockDataMapper) {
         this.fmpProperties = fmpProperties;
-        this.restClient = RestClient.builder()
+        this.restClient = restClientBuilder
                 .baseUrl(fmpProperties.getBaseUrl())
                 .build();
+        this.fmpStockDataMapper = fmpStockDataMapper;
     }
 
     @Override
     public StockDataDto getStockData(String ticker) {
-
         FmpProfileDataResponse[] profileResponse = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/profile")
@@ -52,6 +53,7 @@ public class FmpStockDataProvider implements StockDataProvider {
         if (ratiosResponse != null && ratiosResponse.length > 0) {
             ratios = ratiosResponse[0];
         }
-        return FmpStockDataMapper.toStockData(profile, ratios);
+
+        return fmpStockDataMapper.toStockData(profile, ratios);
     }
 }

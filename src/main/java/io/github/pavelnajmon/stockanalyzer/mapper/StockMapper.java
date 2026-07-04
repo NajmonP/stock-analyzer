@@ -2,14 +2,14 @@ package io.github.pavelnajmon.stockanalyzer.mapper;
 
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.model.entity.Stock;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-public final class StockMapper {
-    private StockMapper() {
-    }
+@Component
+public class StockMapper {
 
-    public static Stock toEntity(StockDataDto stockDataDto) {
+    public Stock toEntity(StockDataDto stockDataDto) {
         Stock stock = new Stock();
 
         stock.setTicker(stockDataDto.ticker());
