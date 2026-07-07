@@ -1,5 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.service;
 
+import io.github.pavelnajmon.stockanalyzer.exception.StockNotFoundException;
+import io.github.pavelnajmon.stockanalyzer.exception.StockNotSavedException;
 import io.github.pavelnajmon.stockanalyzer.mapper.MarketDayMapper;
 import io.github.pavelnajmon.stockanalyzer.mapper.StockMapper;
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
@@ -64,7 +66,7 @@ public class StockPersistenceServiceImpl implements StockPersistenceService {
     @Transactional
     public void addOrUpdateMarketDay(String ticker, MarketDayDto marketDayDto) {
         Stock stock = stockRepository.findByTicker(ticker)
-                .orElseThrow(() -> new IllegalArgumentException("Stock not found for ticker: " + ticker));
+                .orElseThrow(() -> new StockNotSavedException(ticker));
 
         marketDayRepository.findByStockTickerAndDate(ticker, marketDayDto.date())
                 .ifPresentOrElse(
@@ -80,7 +82,7 @@ public class StockPersistenceServiceImpl implements StockPersistenceService {
     @Transactional
     public void updateStockData(String ticker, StockDataDto stockDataDto) {
         Stock stock = stockRepository.findByTicker(ticker)
-                .orElseThrow(() -> new IllegalArgumentException("Stock not found for ticker: " + ticker));
+                .orElseThrow(() -> new StockNotSavedException(ticker));
 
         stockMapper.updateEntityFromDto(stockDataDto, stock);
         stock.setLastUpdatedAt(Instant.now());

@@ -1,5 +1,6 @@
 package io.github.pavelnajmon.stockanalyzer.mapper;
 
+import io.github.pavelnajmon.stockanalyzer.exception.DataNotProvidedException;
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -22,7 +23,7 @@ public class YahooHistoricalDataMapper {
                 .path(0);
 
         if (result.isMissingNode() || result.isNull()) {
-            throw new IllegalArgumentException("Historical prices not found");
+            throw new DataNotProvidedException("Historical prices not found");
         }
 
         JsonNode timestamps = result.path("timestamp");

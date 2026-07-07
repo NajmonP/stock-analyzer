@@ -1,5 +1,6 @@
 package io.github.pavelnajmon.stockanalyzer.service;
 
+import io.github.pavelnajmon.stockanalyzer.exception.TickerBlankException;
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.provider.HistoricalPriceProvider;
@@ -85,7 +86,7 @@ class StockServiceImplTest {
     void addStock_shouldThrowExceptionWhenTickerIsNull() {
         // when + then
         assertThatThrownBy(() -> stockService.addStock(null))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TickerBlankException.class)
                 .hasMessage("Ticker must not be blank.");
 
         verifyNoInteractions(stockDataProvider);
@@ -97,7 +98,7 @@ class StockServiceImplTest {
     void addStock_shouldThrowExceptionWhenTickerIsBlank() {
         // when + then
         assertThatThrownBy(() -> stockService.addStock("   "))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TickerBlankException.class)
                 .hasMessage("Ticker must not be blank.");
 
         verifyNoInteractions(stockDataProvider);

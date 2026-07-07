@@ -1,5 +1,6 @@
 package io.github.pavelnajmon.stockanalyzer.service;
 
+import io.github.pavelnajmon.stockanalyzer.exception.TickerBlankException;
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.provider.HistoricalPriceProvider;
@@ -33,7 +34,7 @@ public class StockServiceImpl implements StockService {
 
     private String normalizeTicker(String ticker) {
         if (ticker == null || ticker.isBlank()) {
-            throw new IllegalArgumentException("Ticker must not be blank.");
+            throw new TickerBlankException();
         }
 
         return ticker.trim().toUpperCase();
