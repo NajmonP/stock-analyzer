@@ -1,6 +1,5 @@
 package io.github.pavelnajmon.stockanalyzer.service;
 
-import io.github.pavelnajmon.stockanalyzer.exception.StockNotFoundException;
 import io.github.pavelnajmon.stockanalyzer.exception.StockNotSavedException;
 import io.github.pavelnajmon.stockanalyzer.mapper.MarketDayMapper;
 import io.github.pavelnajmon.stockanalyzer.mapper.StockMapper;
@@ -48,6 +47,12 @@ public class StockPersistenceServiceImpl implements StockPersistenceService {
         }
 
         stockRepository.save(stock);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTickerStored(String ticker) {
+        return stockRepository.existsByTicker(ticker);
     }
 
     @Override

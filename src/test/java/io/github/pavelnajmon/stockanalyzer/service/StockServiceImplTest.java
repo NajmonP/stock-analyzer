@@ -119,7 +119,6 @@ class StockServiceImplTest {
 
         verify(stockDataProvider).getStockData("AAPL");
         verifyNoInteractions(historicalPriceProvider);
-        verifyNoInteractions(stockPersistenceService);
     }
 
     @Test
@@ -138,6 +137,5 @@ class StockServiceImplTest {
 
         verify(stockDataProvider).getStockData("AAPL");
         verify(historicalPriceProvider).getStockHistoricalPrices("AAPL");
-        verifyNoInteractions(stockPersistenceService);
     }
 }

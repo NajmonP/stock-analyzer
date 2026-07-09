@@ -12,6 +12,8 @@ public interface StockPersistenceService {
     @Transactional
     void saveStockWithMarketDays(StockDataDto stockDataDto, List<MarketDayDto> marketDays);
 
+    boolean isTickerStored(String ticker);
+
     List<String> getAllTickers();
 
     List<String> getTickersForStockDataRefresh(int limit);

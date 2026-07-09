@@ -2,6 +2,8 @@ package io.github.pavelnajmon.stockanalyzer.model.entity;
 
 import io.github.pavelnajmon.stockanalyzer.model.enums.UserRole;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class User {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "role", nullable = false, columnDefinition = "stock_analyzer.user_role")
     private UserRole userRole;
 

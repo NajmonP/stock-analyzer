@@ -20,11 +20,7 @@ public class StockRefreshServiceImpl implements StockRefreshService {
     private final HistoricalPriceProvider historicalPriceProvider;
     private final StockDataProvider stockDataProvider;
 
-    public StockRefreshServiceImpl(
-            StockPersistenceService stockPersistenceService,
-            HistoricalPriceProvider historicalPriceProvider,
-            StockDataProvider stockDataProvider
-    ) {
+    public StockRefreshServiceImpl(StockPersistenceService stockPersistenceService, HistoricalPriceProvider historicalPriceProvider, StockDataProvider stockDataProvider) {
         this.stockPersistenceService = stockPersistenceService;
         this.historicalPriceProvider = historicalPriceProvider;
         this.stockDataProvider = stockDataProvider;

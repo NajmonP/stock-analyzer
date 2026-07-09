@@ -1,4 +1,4 @@
-package io.github.pavelnajmon.stockanalyzer.model.dto;
+package io.github.pavelnajmon.stockanalyzer.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

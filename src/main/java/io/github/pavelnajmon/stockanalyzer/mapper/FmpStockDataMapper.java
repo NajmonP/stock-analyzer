@@ -1,7 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.mapper;
 
-import io.github.pavelnajmon.stockanalyzer.model.dto.FmpProfileDataResponse;
-import io.github.pavelnajmon.stockanalyzer.model.dto.FmpRatiosResponse;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.FmpProfileDataResponse;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.FmpRatiosResponse;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import org.springframework.stereotype.Component;
 
