@@ -1,6 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.repository;
 
 import io.github.pavelnajmon.stockanalyzer.model.entity.User;
+import io.github.pavelnajmon.stockanalyzer.model.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    boolean existsByUserRole(UserRole userRole);
 }

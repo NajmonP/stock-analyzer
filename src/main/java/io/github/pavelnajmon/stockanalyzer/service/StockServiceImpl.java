@@ -7,6 +7,7 @@ import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.model.enums.Attribute;
 import io.github.pavelnajmon.stockanalyzer.provider.HistoricalPriceProvider;
 import io.github.pavelnajmon.stockanalyzer.provider.StockDataProvider;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void addStock(String ticker) {
         String normalizedTicker = normalizeTicker(ticker);
 

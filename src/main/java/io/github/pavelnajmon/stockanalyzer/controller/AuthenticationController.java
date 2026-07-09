@@ -7,6 +7,7 @@ import io.github.pavelnajmon.stockanalyzer.model.dto.response.AuthenticationResp
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.CurrentUserResponse;
 import io.github.pavelnajmon.stockanalyzer.security.CustomUserDetails;
 import io.github.pavelnajmon.stockanalyzer.service.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
         authenticationService.register(request);
 
         return ResponseEntity

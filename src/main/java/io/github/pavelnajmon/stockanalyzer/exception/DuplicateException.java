@@ -19,6 +19,7 @@ public class DuplicateException extends StockAnalyzerException {
             case USERNAME -> errorMessage = "Username already exists";
             case EMAIL -> errorMessage = "Email already exists";
             case TICKER -> errorMessage = "Stock with this ticker already exists";
+            case WATCHLIST_NAME -> errorMessage = "You already have Watchlist with this name";
         }
 
         return errorMessage;
