@@ -61,6 +61,16 @@ public class Watchlist {
         this.createdAt = createdAt;
     }
 
+    public void addWatchlistStock(WatchlistStock watchlistStock) {
+        watchlistStocks.add(watchlistStock);
+        watchlistStock.setWatchlist(this);
+    }
+
+    public void removeWatchlistStock(WatchlistStock watchlistStock) {
+        watchlistStocks.remove(watchlistStock);
+        watchlistStock.setWatchlist(null);
+    }
+
     public List<WatchlistStock> getWatchlistStocks() {
         return watchlistStocks;
     }

@@ -12,6 +12,14 @@ public class DuplicateException extends StockAnalyzerException {
         super(HttpStatusCode.valueOf(409), buildMessage(attribute));
     }
 
+    public DuplicateException(String message, Throwable cause) {
+        super(HttpStatusCode.valueOf(409), message, cause);
+    }
+
+    public DuplicateException(String message) {
+        super(HttpStatusCode.valueOf(409), message);
+    }
+
     private static String buildMessage(Attribute attribute) {
         String errorMessage = "";
 

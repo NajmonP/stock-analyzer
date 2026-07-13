@@ -13,4 +13,8 @@ public interface WatchlistService {
     void deleteWatchlist(Long watchlistId, CustomUserDetails currentUser);
 
     List<WatchlistResponse> getCurrentUserWatchlists(CustomUserDetails currentUser);
+
+    void addStockToWatchlist(Long watchlistId, Long stockId);
+
+    void removeStockFromWatchlist(Long watchlistId, Long stockId);
 }

@@ -34,6 +34,18 @@ public class WatchlistController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{watchlistId}/stocks/{stockId}")
+    public ResponseEntity<Void> addStockToWatchlist(@PathVariable Long watchlistId, @PathVariable Long stockId) {
+        watchlistService.addStockToWatchlist(watchlistId, stockId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{watchlistId}/stocks/{stockId}")
+    public ResponseEntity<Void> removeStockFromWatchlist(@PathVariable Long watchlistId, @PathVariable Long stockId) {
+        watchlistService.removeStockFromWatchlist(watchlistId, stockId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<WatchlistResponse>> getCurrentUserWatchlists(@AuthenticationPrincipal CustomUserDetails currentUser) {
         List<WatchlistResponse> response = watchlistService.getCurrentUserWatchlists(currentUser);

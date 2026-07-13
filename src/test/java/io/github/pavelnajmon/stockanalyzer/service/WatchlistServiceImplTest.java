@@ -5,9 +5,13 @@ import io.github.pavelnajmon.stockanalyzer.exception.EntityNotFoundException;
 import io.github.pavelnajmon.stockanalyzer.mapper.WatchlistMapper;
 import io.github.pavelnajmon.stockanalyzer.model.dto.request.CreateWatchlistRequest;
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.WatchlistResponse;
+import io.github.pavelnajmon.stockanalyzer.model.entity.Stock;
 import io.github.pavelnajmon.stockanalyzer.model.entity.User;
 import io.github.pavelnajmon.stockanalyzer.model.entity.Watchlist;
+import io.github.pavelnajmon.stockanalyzer.model.entity.WatchlistStock;
+import io.github.pavelnajmon.stockanalyzer.repository.StockRepository;
 import io.github.pavelnajmon.stockanalyzer.repository.WatchlistRepository;
+import io.github.pavelnajmon.stockanalyzer.repository.WatchlistStockRepository;
 import io.github.pavelnajmon.stockanalyzer.security.CustomUserDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,14 +31,18 @@ import static org.mockito.Mockito.*;
 class WatchlistServiceImplTest {
 
     private WatchlistRepository watchlistRepository;
+    private WatchlistStockRepository watchlistStockRepository;
     private WatchlistMapper watchlistMapper;
     private WatchlistServiceImpl watchlistService;
+    private StockRepository stockRepository;
 
     @BeforeEach
     void setUp() {
         watchlistRepository = mock(WatchlistRepository.class);
         watchlistMapper = mock(WatchlistMapper.class);
-        watchlistService = new WatchlistServiceImpl(watchlistRepository, watchlistMapper);
+        watchlistStockRepository = mock(WatchlistStockRepository.class);
+        stockRepository = mock(StockRepository.class);
+        watchlistService = new WatchlistServiceImpl(watchlistRepository, watchlistMapper,  watchlistStockRepository, stockRepository);
     }
 
     @Test
@@ -220,5 +228,150 @@ class WatchlistServiceImplTest {
 
         verifyNoInteractions(watchlistRepository);
         verifyNoInteractions(watchlistMapper);
+    }
+
+    @Test
+    void addStockToWatchlist_shouldSaveWatchlistStock_whenWatchlistAndStockExist() {
+        // given
+        Long watchlistId = 1L;
+        Long stockId = 10L;
+
+        Watchlist watchlist = mock(Watchlist.class);
+        Stock stock = mock(Stock.class);
+
+        when(watchlistRepository.findById(watchlistId)).thenReturn(Optional.of(watchlist));
+
+        when(stockRepository.findById(stockId)).thenReturn(Optional.of(stock));
+
+        when(watchlistStockRepository.existsByWatchlistIdAndStockId(watchlistId, stockId)).thenReturn(false);
+
+        // when
+        watchlistService.addStockToWatchlist(watchlistId, stockId);
+
+        // then
+        ArgumentCaptor<WatchlistStock> captor = ArgumentCaptor.forClass(WatchlistStock.class);
+
+        verify(watchlistStockRepository).save(captor.capture());
+
+        WatchlistStock savedWatchlistStock = captor.getValue();
+
+        assertThat(savedWatchlistStock.getWatchlist()).isSameAs(watchlist);
+
+        assertThat(savedWatchlistStock.getStock()).isSameAs(stock);
+
+        assertThat(savedWatchlistStock.getAddedAt()).isNotNull();
+
+        verify(watchlistRepository).findById(watchlistId);
+        verify(stockRepository).findById(stockId);
+
+        verify(watchlistStockRepository).existsByWatchlistIdAndStockId(watchlistId, stockId);
+
+        verifyNoInteractions(watchlistMapper);
+    }
+
+    @Test
+    void addStockToWatchlist_shouldThrowEntityNotFoundException_whenWatchlistDoesNotExist() {
+        // given
+        Long watchlistId = 999L;
+        Long stockId = 10L;
+
+        when(watchlistRepository.findById(watchlistId)).thenReturn(Optional.empty());
+
+        // when + then
+        assertThatThrownBy(() -> watchlistService.addStockToWatchlist(watchlistId, stockId)).isInstanceOf(EntityNotFoundException.class);
+
+        verify(watchlistRepository).findById(watchlistId);
+
+        verifyNoInteractions(stockRepository, watchlistStockRepository, watchlistMapper);
+    }
+
+    @Test
+    void addStockToWatchlist_shouldThrowEntityNotFoundException_whenStockDoesNotExist() {
+        // given
+        Long watchlistId = 1L;
+        Long stockId = 999L;
+
+        Watchlist watchlist = mock(Watchlist.class);
+
+        when(watchlistRepository.findById(watchlistId)).thenReturn(Optional.of(watchlist));
+
+        when(stockRepository.findById(stockId)).thenReturn(Optional.empty());
+
+        // when + then
+        assertThatThrownBy(() -> watchlistService.addStockToWatchlist(watchlistId, stockId)).isInstanceOf(EntityNotFoundException.class);
+
+        verify(watchlistRepository).findById(watchlistId);
+        verify(stockRepository).findById(stockId);
+
+        verifyNoInteractions(watchlistStockRepository, watchlistMapper);
+    }
+
+    @Test
+    void addStockToWatchlist_shouldThrowDuplicateException_whenStockIsAlreadyPresent() {
+        // given
+        Long watchlistId = 1L;
+        Long stockId = 10L;
+
+        Watchlist watchlist = mock(Watchlist.class);
+        Stock stock = mock(Stock.class);
+
+        when(watchlistRepository.findById(watchlistId)).thenReturn(Optional.of(watchlist));
+
+        when(stockRepository.findById(stockId)).thenReturn(Optional.of(stock));
+
+        when(watchlistStockRepository.existsByWatchlistIdAndStockId(watchlistId, stockId)).thenReturn(true);
+
+        // when + then
+        assertThatThrownBy(() -> watchlistService.addStockToWatchlist(watchlistId, stockId))
+                .isInstanceOf(DuplicateException.class)
+                .hasMessageContaining(stockId.toString())
+                .hasMessageContaining(watchlistId.toString());
+
+        verify(watchlistRepository).findById(watchlistId);
+        verify(stockRepository).findById(stockId);
+
+        verify(watchlistStockRepository).existsByWatchlistIdAndStockId(watchlistId, stockId);
+
+        verify(watchlistStockRepository, never()).save(any());
+        verifyNoInteractions(watchlistMapper);
+    }
+
+    @Test
+    void removeStockFromWatchlist_shouldDeleteWatchlistStock_whenRelationExists() {
+        // given
+        Long watchlistId = 1L;
+        Long stockId = 10L;
+
+        WatchlistStock watchlistStock = mock(WatchlistStock.class);
+
+        when(watchlistStockRepository.findByWatchlistIdAndStockId(watchlistId, stockId)).thenReturn(Optional.of(watchlistStock));
+
+        // when
+        watchlistService.removeStockFromWatchlist(watchlistId, stockId);
+
+        // then
+        verify(watchlistStockRepository).findByWatchlistIdAndStockId(watchlistId, stockId);
+
+        verify(watchlistStockRepository).delete(watchlistStock);
+
+        verifyNoInteractions(watchlistRepository, stockRepository, watchlistMapper);
+    }
+
+    @Test
+    void removeStockFromWatchlist_shouldThrowEntityNotFoundException_whenRelationDoesNotExist() {
+        // given
+        Long watchlistId = 1L;
+        Long stockId = 999L;
+
+        when(watchlistStockRepository.findByWatchlistIdAndStockId(watchlistId, stockId)).thenReturn(Optional.empty());
+
+        // when + then
+        assertThatThrownBy(() -> watchlistService.removeStockFromWatchlist(watchlistId, stockId)).isInstanceOf(EntityNotFoundException.class);
+
+        verify(watchlistStockRepository).findByWatchlistIdAndStockId(watchlistId, stockId);
+
+        verify(watchlistStockRepository, never()).delete(any());
+
+        verifyNoInteractions(watchlistRepository, stockRepository, watchlistMapper);
     }
 }
