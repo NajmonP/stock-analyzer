@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Stock Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="auth-page">
+<main class="auth-card">
+    <a class="brand brand-centered" href="/">Stock Analyzer</a>
+
+    <div class="auth-heading">
+        <p class="eyebrow">Welcome back</p>
+        <h1>Sign in</h1>
+        <p>Use your username or email address.</p>
+    </div>
+
+    <div id="alert" class="alert hidden" role="alert"></div>
+
+    <form id="login-form" class="form-stack">
+        <label>
+            Username or email
+            <input
+                id="username-or-email"
+                name="usernameOrEmail"
+                type="text"
+                autocomplete="username"
+                required
+            >
+        </label>
+
+        <label>
+            Password
+            <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+            >
+        </label>
+
+        <button id="submit-button" class="button button-primary button-full" type="submit">
+            Sign in
+        </button>
+    </form>
+
+    <p class="auth-switch">
+        No account yet?
+        <a href="/register.html">Create one</a>
+    </p>
+</main>
+
+<script type="module" src="/js/login.js"></script>
+</body>
+</html>

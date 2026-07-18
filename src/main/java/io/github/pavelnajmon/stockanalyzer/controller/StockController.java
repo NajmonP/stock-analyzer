@@ -3,6 +3,7 @@ package io.github.pavelnajmon.stockanalyzer.controller;
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.StockDetailResponse;
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.StockSummaryResponse;
 import io.github.pavelnajmon.stockanalyzer.service.StockService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class StockController {
     @PostMapping("/add")
     public ResponseEntity<String> addStock(@RequestParam String ticker){
         stockService.addStock(ticker);
-        return ResponseEntity.ok("stock added");
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping

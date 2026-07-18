@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks | Stock Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header id="app-header"></header>
+
+<main class="page-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Market overview</p>
+            <h1>Stocks</h1>
+            <p>Browse stocks available in the application.</p>
+        </div>
+        <button id="refresh-button" class="button button-secondary" type="button">
+            Refresh
+        </button>
+    </section>
+
+    <section id="admin-panel" class="panel hidden">
+        <div class="section-heading">
+            <div>
+                <h2>Add stock</h2>
+                <p>Available only to administrators.</p>
+            </div>
+        </div>
+
+        <form id="add-stock-form" class="inline-form">
+            <label class="grow">
+                Ticker
+                <input
+                    id="ticker"
+                    name="ticker"
+                    type="text"
+                    maxlength="15"
+                    placeholder="AAPL"
+                    autocomplete="off"
+                    required
+                >
+            </label>
+            <button id="add-stock-button" class="button button-primary" type="submit">
+                Add stock
+            </button>
+        </form>
+        <div id="admin-alert" class="alert hidden" role="alert"></div>
+    </section>
+
+    <div id="alert" class="alert hidden" role="alert"></div>
+
+    <section class="panel">
+        <div class="toolbar">
+            <label class="search-field">
+                <span class="sr-only">Search stocks</span>
+                <input id="stock-search" type="search" placeholder="Search by ticker, company, sector or industry">
+            </label>
+            <span id="stock-count" class="muted"></span>
+        </div>
+
+        <div id="loading" class="loading-state">Loading stocks…</div>
+        <div id="empty-state" class="empty-state hidden">
+            <h2>No stocks found</h2>
+            <p>There are currently no stocks matching your search.</p>
+        </div>
+        <div id="stocks-table-wrapper" class="table-wrapper hidden">
+            <table class="stocks-table">
+                <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Ticker</th>
+                    <th>Sector</th>
+                    <th>Industry</th>
+                    <th>Last close</th>
+                    <th>Market cap</th>
+                    <th class="actions-column">Action</th>
+                </tr>
+                </thead>
+                <tbody id="stocks-table-body"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script type="module" src="/js/stocks.js"></script>
+</body>
+</html>

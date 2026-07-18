@@ -88,7 +88,7 @@ public class StockPersistenceServiceImpl implements StockPersistenceService {
     @Override
     @Transactional(readOnly = true)
     public List<StockSummaryResponse> getStockSummaries() {
-        List<Stock> stocks = stockRepository.findAll();
+        List<Stock> stocks = stockRepository.findAllOrderByMarketCapitalizationDesc();
 
         return stocks.stream()
                 .map(stock -> {

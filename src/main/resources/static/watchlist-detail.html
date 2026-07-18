@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist detail | Stock Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header id="app-header"></header>
+
+<main class="page-shell">
+    <a class="back-link" href="/watchlists.html">← Back to watchlists</a>
+
+    <div id="alert" class="alert hidden" role="alert"></div>
+    <div id="loading" class="loading-state">Loading watchlist…</div>
+
+    <div id="watchlist-content" class="hidden">
+        <section class="page-heading">
+            <div>
+                <p class="eyebrow">Watchlist detail</p>
+                <h1 id="watchlist-name"></h1>
+                <p id="watchlist-created-at"></p>
+            </div>
+            <button id="delete-watchlist-button" class="button button-danger" type="button">
+                Delete watchlist
+            </button>
+        </section>
+
+        <section class="panel">
+            <div class="toolbar">
+                <div>
+                    <h2>Stocks</h2>
+                    <p id="stock-count" class="muted"></p>
+                </div>
+            </div>
+
+            <div id="empty-state" class="empty-state hidden">
+                <h2>This watchlist is empty</h2>
+                <p>Add stocks from a stock detail page.</p>
+                <a class="button button-primary" href="/stocks.html">Browse stocks</a>
+            </div>
+
+            <div id="stocks-table-wrapper" class="table-wrapper hidden">
+                <table class="stocks-table">
+                    <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Ticker</th>
+                        <th>Sector</th>
+                        <th>Last close</th>
+                        <th>Market cap</th>
+                        <th class="actions-column">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="stocks-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script type="module" src="/js/watchlist-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlists | Stock Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header id="app-header"></header>
+
+<main class="page-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Personal collections</p>
+            <h1>Watchlists</h1>
+            <p id="page-description">Create and manage your stock watchlists.</p>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div>
+                <h2>Create watchlist</h2>
+                <p>Use a clear name such as “Technology” or “Dividend stocks”.</p>
+            </div>
+        </div>
+
+        <form id="create-watchlist-form" class="inline-form">
+            <label class="grow">
+                Name
+                <input
+                    id="watchlist-name"
+                    name="name"
+                    type="text"
+                    maxlength="150"
+                    placeholder="My watchlist"
+                    required
+                >
+            </label>
+            <button id="create-button" class="button button-primary" type="submit">
+                Create
+            </button>
+        </form>
+        <div id="form-alert" class="alert hidden" role="alert"></div>
+    </section>
+
+    <div id="alert" class="alert hidden" role="alert"></div>
+
+    <section class="panel">
+        <div id="loading" class="loading-state">Loading watchlists…</div>
+        <div id="empty-state" class="empty-state hidden">
+            <h2>No watchlists yet</h2>
+            <p>Create your first watchlist using the form above.</p>
+        </div>
+        <div id="watchlists-grid" class="watchlist-grid hidden"></div>
+    </section>
+</main>
+
+<script type="module" src="/js/watchlists.js"></script>
+</body>
+</html>

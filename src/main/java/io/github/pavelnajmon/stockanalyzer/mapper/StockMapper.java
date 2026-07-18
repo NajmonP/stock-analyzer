@@ -28,6 +28,7 @@ public class StockMapper {
                 stock.getCompanyName(),
                 stock.getSector(),
                 stock.getIndustry(),
+                stock.getLogoUrl(),
                 lastClosePrice,
                 stock.getMarketCapitalization()
         );

@@ -27,4 +27,13 @@ public interface StockRepository extends JpaRepository<Stock,Long> {
                 s.ticker asc
             """)
     List<String> findTickersForStockDataRefresh(Pageable pageable);
+
+    @Query("""
+    select s
+    from Stock s
+    order by
+        case when s.marketCapitalization is null then 1 else 0 end,
+        s.marketCapitalization desc
+    """)
+    List<Stock> findAllOrderByMarketCapitalizationDesc();
 }

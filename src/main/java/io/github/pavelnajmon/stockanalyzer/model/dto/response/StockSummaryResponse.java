@@ -8,6 +8,7 @@ public record StockSummaryResponse(
         String companyName,
         String sector,
         String industry,
+        String logoUrl,
         BigDecimal lastClosePrice,
         BigDecimal marketCapitalization
 ) {

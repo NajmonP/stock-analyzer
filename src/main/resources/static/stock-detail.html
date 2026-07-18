@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock detail | Stock Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header id="app-header"></header>
+
+<main class="page-shell">
+    <a class="back-link" href="/stocks.html">← Back to stocks</a>
+
+    <div id="alert" class="alert hidden" role="alert"></div>
+    <div id="loading" class="loading-state">Loading stock detail…</div>
+
+    <div id="stock-content" class="hidden">
+        <section class="stock-hero panel">
+            <div class="stock-identity">
+                <div id="logo-wrapper" class="company-logo-wrapper hidden">
+                    <img id="company-logo" class="company-logo" alt="">
+                </div>
+                <div>
+                    <p id="stock-ticker" class="eyebrow"></p>
+                    <h1 id="company-name"></h1>
+                    <p id="stock-meta" class="muted"></p>
+                </div>
+            </div>
+            <a id="company-website" class="button button-secondary hidden" target="_blank" rel="noopener noreferrer">
+                Company website
+            </a>
+        </section>
+
+        <section class="metric-grid" id="metric-grid"></section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Historical closing price</h2>
+                    <p id="history-caption">Stored market data</p>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="price-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="two-column-layout">
+            <article class="panel">
+                <div class="section-heading">
+                    <div>
+                        <h2>Company profile</h2>
+                    </div>
+                </div>
+                <p id="company-description" class="description"></p>
+            </article>
+
+            <aside class="panel">
+                <div class="section-heading">
+                    <div>
+                        <h2>Add to watchlist</h2>
+                        <p>Select one of your watchlists.</p>
+                    </div>
+                </div>
+
+                <form id="watchlist-form" class="form-stack">
+                    <label>
+                        Watchlist
+                        <select id="watchlist-select" required></select>
+                    </label>
+                    <button id="watchlist-button" class="button button-primary" type="submit">
+                        Add stock
+                    </button>
+                </form>
+                <div id="watchlist-alert" class="alert hidden" role="alert"></div>
+            </aside>
+        </section>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script type="module" src="/js/stock-detail.js"></script>
+</body>
+</html>
