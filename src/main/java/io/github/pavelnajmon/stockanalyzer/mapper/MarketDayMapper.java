@@ -21,6 +21,17 @@ public class MarketDayMapper {
         setMarketDayAttributes(marketDayDto, marketDay);
     }
 
+    public MarketDayDto toDto(MarketDay marketDay) {
+        return new MarketDayDto(
+                marketDay.getDate(),
+                marketDay.getOpenPrice(),
+                marketDay.getHighPrice(),
+                marketDay.getLowPrice(),
+                marketDay.getClosePrice(),
+                marketDay.getVolume()
+        );
+    }
+
     private void setMarketDayAttributes(MarketDayDto marketDayDto, MarketDay marketDay) {
         marketDay.setDate(marketDayDto.date());
         marketDay.setOpenPrice(marketDayDto.openPrice());

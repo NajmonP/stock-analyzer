@@ -1,6 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.security;
 
 import io.github.pavelnajmon.stockanalyzer.model.entity.User;
+import io.github.pavelnajmon.stockanalyzer.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +25,12 @@ public class CustomUserDetails implements UserDetails {
         return user.getEmail();
     }
 
-    public String getRole() {
+    public String getRoleName() {
         return user.getUserRole().name();
+    }
+
+    public UserRole getRole(){
+        return user.getUserRole();
     }
 
     @Override

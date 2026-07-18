@@ -1,6 +1,5 @@
 package io.github.pavelnajmon.stockanalyzer.mapper;
 
-import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.CurrentUserResponse;
 import io.github.pavelnajmon.stockanalyzer.security.CustomUserDetails;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,7 @@ public class CurrentUserResponseMapper {
                 userDetails.getUserId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                userDetails.getRole()
+                userDetails.getRoleName()
         );
     }
 }

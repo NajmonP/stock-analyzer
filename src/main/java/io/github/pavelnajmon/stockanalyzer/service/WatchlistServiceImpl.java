@@ -2,6 +2,8 @@ package io.github.pavelnajmon.stockanalyzer.service;
 
 import io.github.pavelnajmon.stockanalyzer.exception.DuplicateException;
 import io.github.pavelnajmon.stockanalyzer.exception.EntityNotFoundException;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.StockSummaryResponse;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.WatchlistDetailResponse;
 import io.github.pavelnajmon.stockanalyzer.model.entity.Stock;
 import io.github.pavelnajmon.stockanalyzer.model.entity.User;
 import io.github.pavelnajmon.stockanalyzer.model.entity.Watchlist;
@@ -11,7 +13,7 @@ import io.github.pavelnajmon.stockanalyzer.model.dto.response.WatchlistResponse;
 import io.github.pavelnajmon.stockanalyzer.model.entity.WatchlistStock;
 import io.github.pavelnajmon.stockanalyzer.model.enums.Attribute;
 import io.github.pavelnajmon.stockanalyzer.model.enums.EntityType;
-import io.github.pavelnajmon.stockanalyzer.repository.StockRepository;
+import io.github.pavelnajmon.stockanalyzer.model.enums.UserRole;
 import io.github.pavelnajmon.stockanalyzer.repository.WatchlistRepository;
 import io.github.pavelnajmon.stockanalyzer.repository.WatchlistStockRepository;
 import io.github.pavelnajmon.stockanalyzer.security.CustomUserDetails;
@@ -26,16 +28,16 @@ import java.util.List;
 @Service
 public class WatchlistServiceImpl implements WatchlistService {
 
+    private final StockPersistenceService stockPersistenceService;
     private final WatchlistRepository watchlistRepository;
     private final WatchlistMapper watchlistMapper;
     private final WatchlistStockRepository watchlistStockRepository;
-    private final StockRepository stockRepository;
 
-    public WatchlistServiceImpl(WatchlistRepository watchlistRepository, WatchlistMapper watchlistMapper, WatchlistStockRepository watchlistStockRepository, StockRepository stockRepository) {
+    public WatchlistServiceImpl(StockPersistenceService stockPersistenceService, WatchlistRepository watchlistRepository, WatchlistMapper watchlistMapper, WatchlistStockRepository watchlistStockRepository) {
+        this.stockPersistenceService = stockPersistenceService;
         this.watchlistRepository = watchlistRepository;
         this.watchlistMapper = watchlistMapper;
         this.watchlistStockRepository = watchlistStockRepository;
-        this.stockRepository = stockRepository;
     }
 
     @Override
@@ -76,13 +78,36 @@ public class WatchlistServiceImpl implements WatchlistService {
     @Override
     @Transactional(readOnly = true)
     @PreAuthorize("isAuthenticated()")
-    public List<WatchlistResponse> getCurrentUserWatchlists(CustomUserDetails currentUser) {
-        User user = currentUser.getUser();
+    public List<WatchlistResponse> getWatchlists(CustomUserDetails userDetails) {
+        if (userDetails.getRole() == UserRole.ADMIN) {
+            return watchlistRepository.findAll()
+                    .stream()
+                    .map(watchlistMapper::toResponse)
+                    .toList();
+        }
 
-        return watchlistRepository.findAllByUserOrderByCreatedAtDesc(user)
+        return watchlistRepository.findAllByUser(userDetails.getUser())
                 .stream()
                 .map(watchlistMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @authorization.isOwner(#watchlistId, authentication)")
+    public WatchlistDetailResponse getWatchlistDetail(Long watchlistId) {
+        Watchlist watchlist = watchlistRepository.findById(watchlistId)
+                .orElseThrow(() -> new EntityNotFoundException(EntityType.WATCHLIST));
+
+        List<StockSummaryResponse> stockSummaryResponses = watchlist.getWatchlistStocks()
+                .stream()
+                .map(watchlistStock -> {
+                    Long stockId = watchlistStock.getStock().getId();
+                    return stockPersistenceService.getStockSummary(stockId);
+                })
+                .toList();
+
+        return watchlistMapper.toDetailResponse(watchlist, stockSummaryResponses);
     }
 
     @Override
@@ -90,7 +115,7 @@ public class WatchlistServiceImpl implements WatchlistService {
     @PreAuthorize("hasRole('ADMIN') or @authorization.isOwner(#watchlistId, authentication)")
     public void addStockToWatchlist(Long watchlistId, Long stockId) {
         Watchlist watchlist = watchlistRepository.findById(watchlistId).orElseThrow(() -> new EntityNotFoundException(EntityType.WATCHLIST));
-        Stock stock = stockRepository.findById(stockId).orElseThrow(() -> new EntityNotFoundException(EntityType.STOCK));
+        Stock stock = stockPersistenceService.getStockById(stockId);
 
         if (watchlistStockRepository.existsByWatchlistIdAndStockId(watchlistId, stockId)) {
             throw new DuplicateException("Stock with id " + stockId + " is already present in watchlist with id " + watchlistId);

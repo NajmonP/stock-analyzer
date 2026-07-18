@@ -1,6 +1,7 @@
 package io.github.pavelnajmon.stockanalyzer.controller;
 
 import io.github.pavelnajmon.stockanalyzer.model.dto.request.CreateWatchlistRequest;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.WatchlistDetailResponse;
 import io.github.pavelnajmon.stockanalyzer.model.dto.response.WatchlistResponse;
 import io.github.pavelnajmon.stockanalyzer.security.CustomUserDetails;
 import io.github.pavelnajmon.stockanalyzer.service.WatchlistService;
@@ -47,8 +48,14 @@ public class WatchlistController {
     }
 
     @GetMapping
-    public ResponseEntity<List<WatchlistResponse>> getCurrentUserWatchlists(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        List<WatchlistResponse> response = watchlistService.getCurrentUserWatchlists(currentUser);
+    public ResponseEntity<List<WatchlistResponse>> getWatchlists(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        List<WatchlistResponse> response = watchlistService.getWatchlists(currentUser);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/detail/{watchlistId}")
+    public ResponseEntity<WatchlistDetailResponse> getWatchlistDetail(@PathVariable Long watchlistId) {
+        WatchlistDetailResponse response = watchlistService.getWatchlistDetail(watchlistId);
         return ResponseEntity.ok(response);
     }
 }

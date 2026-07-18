@@ -4,6 +4,8 @@ import io.github.pavelnajmon.stockanalyzer.exception.DuplicateException;
 import io.github.pavelnajmon.stockanalyzer.exception.TickerBlankException;
 import io.github.pavelnajmon.stockanalyzer.model.dto.MarketDayDto;
 import io.github.pavelnajmon.stockanalyzer.model.dto.StockDataDto;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.StockDetailResponse;
+import io.github.pavelnajmon.stockanalyzer.model.dto.response.StockSummaryResponse;
 import io.github.pavelnajmon.stockanalyzer.model.enums.Attribute;
 import io.github.pavelnajmon.stockanalyzer.provider.HistoricalPriceProvider;
 import io.github.pavelnajmon.stockanalyzer.provider.StockDataProvider;
@@ -38,6 +40,16 @@ public class StockServiceImpl implements StockService {
         List<MarketDayDto> marketDays = historicalPriceProvider.getStockHistoricalPrices(normalizedTicker);
 
         stockPersistenceService.saveStockWithMarketDays(stockDataDto, marketDays);
+    }
+
+    @Override
+    public List<StockSummaryResponse> getStocks() {
+        return stockPersistenceService.getStockSummaries();
+    }
+
+    @Override
+    public StockDetailResponse getStockDetail(Long stockId) {
+        return stockPersistenceService.getStockDetail(stockId);
     }
 
     private String normalizeTicker(String ticker) {
